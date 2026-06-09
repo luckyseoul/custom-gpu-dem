@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "custom-gpu-dem"
+version = "0.1.0"
+description = "High-performance single-GPU DEM (Discrete Element Method) with CuPy. Features physical (force-based) boundaries, device-side cell-list, real gas drag with porosity correction, and reproducible high-N scaling. Originally developed for low-pressure regolith + iron shot simulations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+  {name = "RCFX Contributors"}
+]
+keywords = ["DEM", "discrete-element-method", "GPU", "CuPy", "granular", "simulation", "CFD-DEM", "regolith"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+
+dependencies = [
+    "numpy>=1.23",
+    "cupy-cuda12x>=12.0; platform_system == 'Linux'",  # adjust for user's CUDA; users may install cupy-cuda11x etc.
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pyyaml", "matplotlib"]
+vtk = ["vtk"]  # optional for advanced VTK writing; core uses pure numpy writer
+
+[project.scripts]
+custom-gpu-dem = "custom_gpu_dem.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"custom_gpu_dem" = ["*.md"]
