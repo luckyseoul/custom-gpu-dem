@@ -24,7 +24,7 @@ class DEMSimulation:
         self.omega = None
         self.radius = None
         self.mat = None
-        self.step = 0
+        self.current_step = 0
 
         self.BOX = float(self.cfg.box)
         self.DT = float(self.cfg.dt)
@@ -57,7 +57,7 @@ class DEMSimulation:
         self.omega = cp.zeros((n, 3), dtype=cp.float32)
         self.radius = cp.asarray(radius)
         self.mat = cp.asarray(mat)
-        self.step = 0
+        self.current_step = 0
 
     def step(self):
         if self.pos is None:
@@ -92,20 +92,20 @@ class DEMSimulation:
             self.pos[over, 2] = float(self.cfg.lid.lid_z)
             self.vel[over, 2] = cp.minimum(self.vel[over, 2], 0.0)
 
-        self.step += 1
+        self.current_step += 1
 
     def run(self, steps: int, log_every: int = 100, vtk_every: Optional[int] = None, out_dir: str = "output"):
         Path(out_dir).mkdir(parents=True, exist_ok=True)
         for s in range(steps):
             self.step()
-            if log_every and (self.step % log_every == 0):
-                print(f"step {self.step}  mean_z={float(self.pos[:,2].mean()):.5f}")
-            if vtk_every and (self.step % vtk_every == 0):
-                self.write_vtk(f"{out_dir}/p_{self.step:06d}.vtu")
+            if log_every and (self.current_step % log_every == 0):
+                print(f"step {self.current_step}  mean_z={float(self.pos[:,2].mean()):.5f}")
+            if vtk_every and (self.current_step % vtk_every == 0):
+                self.write_vtk(f"{out_dir}/p_{self.current_step:06d}.vtu")
 
     def write_vtk(self, path: str, extra: Optional[dict] = None):
-        write_vtk_particles(path, self.pos, self.vel, self.radius, self.mat, self.step, extra or {})
+        write_vtk_particles(path, self.pos, self.vel, self.radius, self.mat, self.current_step, extra or {})
 
     def save_checkpoint(self, path: str):
-        save_checkpoint(path, self.pos, self.vel, self.omega, self.radius, self.mat, self.step,
+        save_checkpoint(path, self.pos, self.vel, self.omega, self.radius, self.mat, self.current_step,
                         box=self.BOX, u_g=self.U_G)
