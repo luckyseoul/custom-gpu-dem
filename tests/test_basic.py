@@ -12,7 +12,7 @@ def test_init_and_step():
     assert len(sim.pos) == 200
     for _ in range(10):
         sim.step()
-    assert sim.step == 10
+    assert sim.current_step == 10
     assert float(sim.pos[:,2].mean()) >= 0.0   # didn't fall through floor
 
 def test_vtk_export(tmp_path):

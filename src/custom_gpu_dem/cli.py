@@ -2,12 +2,13 @@
 Basic CLI for custom-gpu-dem.
 
 Usage:
-  custom-gpu-dem run examples/simple.yaml --steps 500 --vtk-every 100
+  custom-gpu-dem run                  # uses built-in defaults
+  custom-gpu-dem run my_config.yaml --steps 500 --vtk-every 100
 """
 import argparse
 from pathlib import Path
 
-from .config import load_config
+from .config import load_config, DEMConfig
 from .simulation import DEMSimulation
 
 def main():
@@ -15,7 +16,7 @@ def main():
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     run_p = sub.add_parser("run", help="Run a simulation from config")
-    run_p.add_argument("config", help="YAML or will use defaults")
+    run_p.add_argument("config", nargs="?", default=None, help="YAML config file (or omit for defaults)")
     run_p.add_argument("--steps", type=int, default=400)
     run_p.add_argument("--vtk-every", type=int, default=0)
     run_p.add_argument("--out-dir", default="output")
@@ -24,14 +25,15 @@ def main():
     args = parser.parse_args()
 
     if args.cmd == "run":
-        cfg = DEMConfig()  # TODO: proper load  # fallback not great
-        # simple: if file not exist use default config
-        try:
-            cfg = load_config(args.config)
-        except Exception:
-            from .config import DEMConfig
+        if args.config:
+            try:
+                cfg = load_config(args.config)
+            except Exception:
+                cfg = DEMConfig()
+                print("Using default DEMConfig (no valid config file or load error)")
+        else:
             cfg = DEMConfig()
-            print("Using default DEMConfig (no valid config file)")
+            print("Using default DEMConfig (no config file provided)")
 
         sim = DEMSimulation(cfg)
         sim.initialize_particles()

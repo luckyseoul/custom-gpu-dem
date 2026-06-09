@@ -19,6 +19,7 @@ materials:
 """
 from __future__ import annotations
 from dataclasses import dataclass, field, asdict
+from pathlib import Path
 from typing import Any, Dict, Optional
 import os
 
@@ -91,3 +92,20 @@ class DEMConfig:
             raise RuntimeError("pyyaml required to save YAML")
         with open(path, "w") as f:
             yaml.safe_dump(self.to_dict(), f, sort_keys=False)
+
+
+def load_config(path_or_dict: str | dict) -> "DEMConfig":
+    """Convenience loader for CLI and scripts.
+    Accepts path to YAML or a dict. Falls back to default DEMConfig on error.
+    """
+    if isinstance(path_or_dict, dict):
+        return DEMConfig.from_dict(path_or_dict)
+    if isinstance(path_or_dict, str):
+        p = path_or_dict
+        try:
+            if p.endswith(('.yaml', '.yml')) or Path(p).exists():
+                return DEMConfig.from_yaml(p)
+        except Exception:
+            pass
+    # default
+    return DEMConfig()

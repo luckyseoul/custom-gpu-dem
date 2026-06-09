@@ -26,7 +26,7 @@ def main():
     for i in range(300):
         sim.step()
         if i % 100 == 0:
-            print(f"step {sim.step}  mean z = {float(sim.pos[:,2].mean()):.4f} m")
+            print(f"step {sim.current_step}  mean z = {float(sim.pos[:,2].mean()):.4f} m")
 
     out = Path("examples_output")
     out.mkdir(exist_ok=True)

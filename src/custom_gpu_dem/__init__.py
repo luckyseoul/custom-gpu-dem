@@ -14,10 +14,12 @@ This package was extracted and cleaned from the RCFX patent evidence campaign.
 It is intended as a reusable tool for granular simulations (especially low-g, cohesive, low-pressure gas drag cases).
 
 Example:
-    from custom_gpu_dem import DEMSimulation, load_config
-    sim = DEMSimulation.from_config("my_sim.yaml")
+    from custom_gpu_dem import DEMSimulation, DEMConfig, load_config
+    cfg = DEMConfig(n_particles=2000)  # or load_config("my_sim.yaml")
+    sim = DEMSimulation(cfg)
+    sim.initialize_particles()
     sim.run(steps=1000)
-    sim.write_vtk("output/particles")
+    sim.write_vtk("output/particles.vtu")
 
 See docs/ and examples/ for full user guide and demos.
 """
@@ -33,12 +35,13 @@ from .core.optimized_step import (
     make_lid_freeboard_damper,
 )
 from .simulation import DEMSimulation
-from .config import DEMConfig
+from .config import DEMConfig, load_config
 
 __version__ = "0.1.0"
 __all__ = [
     "DEMSimulation",
     "DEMConfig",
+    "load_config",
     
     "compute_forces",
     "compute_forces_cell_raw",

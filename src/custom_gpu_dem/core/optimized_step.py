@@ -24,6 +24,11 @@ for s in range(steps):
 
 import cupy as cp
 
+# Bring names used inside low-level stepper / runner into module scope.
+# These are implemented in dem_kernels (shared with high-level path).
+from .dem_kernels import compute_drag, estimate_local_porosity, integrate
+
+
 def unconditional_clips(pos, vel, BOX):
     """Device-only clips for walls + floor. No host sync, no 'if cp.any'."""
     # Floor z=0
