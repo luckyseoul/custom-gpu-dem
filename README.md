@@ -1,5 +1,10 @@
 # custom-gpu-dem
 
+<p align="center">
+  <img src="logo.png" alt="GPU DEM particles" width="168" />
+</p>
+
+
 High-performance single-GPU Discrete Element Method (DEM) code using CuPy.
 
 ## Highlights (why this one)
